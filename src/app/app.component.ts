@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, Output, ViewChild} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'fitness-tracker';
+  // @ViewChild('sidenav')
+  // onToggle(): void{  }
 }
