@@ -3,6 +3,7 @@ import {Subject, Subscription} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {AngularFirestore} from '@angular/fire/firestore';
+import {UIService} from '../shered/ui.service';
 
 @Injectable()
 export class TrainingService {
@@ -13,7 +14,7 @@ export class TrainingService {
   finishedExercisesChanged = new Subject<Exercise[]>();
   private firebaseSubscriptions: Subscription[] = [];
 
-  constructor(private db: AngularFirestore) {
+  constructor(private db: AngularFirestore, private uiService: UIService) {
   }
 
   fetchAvailableExercise(): void {
@@ -32,6 +33,10 @@ export class TrainingService {
       ).subscribe((exercises: Exercise[]) => {
         this.availableExercise = exercises;
         this.exercisesChanged.next([...this.availableExercise]);
+      }, error => {
+        this.uiService.loadingStateChanged.next(false);
+        this.uiService.showSnackbar('Fetching Exercises failed, please try again later', null as any, 4000);
+        this.exercisesChanged.next(null as any);
       }));
   }
 
