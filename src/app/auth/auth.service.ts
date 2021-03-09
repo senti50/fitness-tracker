@@ -7,7 +7,7 @@ import {UIService} from '../shered/ui.service';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '../app.reducer';
 import * as UI from '../shered/ui.actions';
-import {SetAuthenticated, SetUnauthenticated} from '../auth/auth.actions';
+import {SetAuthenticated, SetUnauthenticated} from './auth.actions';
 
 @Injectable()
 export class AuthService {
