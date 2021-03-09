@@ -4,6 +4,9 @@ import {map} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {UIService} from '../shered/ui.service';
+import * as fromRoot from '../app.reducer';
+import * as UI from '../shered/ui.actions';
+import {Store} from '@ngrx/store';
 
 @Injectable()
 export class TrainingService {
@@ -14,10 +17,15 @@ export class TrainingService {
   finishedExercisesChanged = new Subject<Exercise[]>();
   private firebaseSubscriptions: Subscription[] = [];
 
-  constructor(private db: AngularFirestore, private uiService: UIService) {
+  constructor(
+    private db: AngularFirestore,
+    private uiService: UIService,
+    private store: Store<fromRoot.State>
+  ) {
   }
 
   fetchAvailableExercise(): void {
+    this.store.dispatch(new UI.StartLoading());
     this.firebaseSubscriptions.push(this.db
       .collection('availableExercises')
       .snapshotChanges()
@@ -31,10 +39,13 @@ export class TrainingService {
           });
         })
       ).subscribe((exercises: Exercise[]) => {
+        this.store.dispatch(new UI.StopLoading());
+        // this.uiService.loadingStateChanged.next(false);
         this.availableExercise = exercises;
         this.exercisesChanged.next([...this.availableExercise]);
       }, error => {
-        this.uiService.loadingStateChanged.next(false);
+        this.store.dispatch(new UI.StopLoading());
+        // this.uiService.loadingStateChanged.next(false);
         this.uiService.showSnackbar('Fetching Exercises failed, please try again later', null, 4000);
         this.exercisesChanged.next(null);
       }));
